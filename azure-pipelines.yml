@@ -21,7 +21,7 @@ steps:
 #  inputs:
 #    version: '3.0.0'
 
-- script: dotnet restore
+#- script: dotnet restore
 
 - task: DotNetCoreCLI@2
   inputs:
