@@ -7,9 +7,23 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-2019'
+
 
 steps:
+- task: DotNetCoreInstaller@0
+  inputs:
+    version: '3.0.0'
+
+- script: dotnet restore
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration Release'
+
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
