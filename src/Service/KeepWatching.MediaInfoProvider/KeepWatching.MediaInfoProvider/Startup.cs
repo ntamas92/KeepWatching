@@ -27,13 +27,6 @@ namespace KeepWatching.MediaInfoProvider
         {
             services.AddControllers()
                 .AddNewtonsoftJson();
-                
-            services.AddCors(options => {
-                options.AddPolicy(AllowLocalhost, builder => {
-                    builder.WithOrigins("http://localhost:3000")
-                           .WithOrigins("https://localhost:3000");
-                });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +36,8 @@ namespace KeepWatching.MediaInfoProvider
             {
                 app.UseDeveloperExceptionPage();
 
-                app.UseCors(AllowLocalhost);
+                //TODO: Configure CORS correctly upon deployment.
+                app.UseCors(builder => builder.AllowAnyOrigin());
             }
             else
             {
@@ -62,7 +56,5 @@ namespace KeepWatching.MediaInfoProvider
                 endpoints.MapControllers();
             });
         }
-
-        private const string AllowLocalhost = "AllowLocalhost"; 
     }
 }
