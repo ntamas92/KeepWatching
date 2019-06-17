@@ -18,9 +18,6 @@ namespace KeepWatching.MediaInfoProvider.Controllers
     public class MediaController : ControllerBase
     {
         
-
-        //https://api.themoviedb.org/3/search/multi?query=avengers&api_key=6ef8fba42d9f1bbcfe1130a0d9a9ae37
-
         //Search only TV Shows and Movies, episodes shall be redirected from the TV show homepage
         [HttpGet]
         public async Task<IEnumerable<AbstractMedia>> Get(string title)
@@ -28,7 +25,7 @@ namespace KeepWatching.MediaInfoProvider.Controllers
 
             QueryBuilder queryBuilder = new QueryBuilder();
             queryBuilder.Add("query", title);
-            queryBuilder.Add("api_key", "6ef8fba42d9f1bbcfe1130a0d9a9ae37");
+            //queryBuilder.Add("api_key", "yourapikeyhere");
 
             UriBuilder uriBuilder = new UriBuilder("https", "api.themoviedb.org");
             uriBuilder.Path = "3/search/multi";
