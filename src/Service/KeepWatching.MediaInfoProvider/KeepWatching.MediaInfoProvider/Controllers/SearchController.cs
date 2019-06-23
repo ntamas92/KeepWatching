@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using KeepWatching.MediaInfoProvider.Model;
+using KeepWatching.MediaInfoProvider.Repositories;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,34 +18,18 @@ namespace KeepWatching.MediaInfoProvider.Controllers
     [ApiController]
     public class MediaController : ControllerBase
     {
-        
+        private readonly IMediaRepository mediaRepository;
+
+        public MediaController(IMediaRepository mediaRepository)
+        {
+            this.mediaRepository = mediaRepository;
+        }
+
         //Search only TV Shows and Movies, episodes shall be redirected from the TV show homepage
         [HttpGet]
-        public async Task<IEnumerable<AbstractMedia>> Get(string title)
+        public async Task<IEnumerable<AbstractMedia>> Get([FromQuery] string title)
         {
-
-            QueryBuilder queryBuilder = new QueryBuilder();
-            queryBuilder.Add("query", title);
-            //queryBuilder.Add("api_key", "yourapikeyhere");
-
-            UriBuilder uriBuilder = new UriBuilder("https", "api.themoviedb.org");
-            uriBuilder.Path = "3/search/multi";
-            uriBuilder.Query = queryBuilder.ToQueryString().ToUriComponent();
-
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage response = await client.GetAsync(uriBuilder.Uri);
-                string result = await response.Content.ReadAsStringAsync();
-
-                IEnumerable<AbstractMedia> movies = JObject.Parse(result)
-                    .GetValue("results")
-                    .Children()
-                    .Where(x => x.Value<string>("media_type").Equals("movie"))
-                    .Select(x => x.Value<string>("title"))
-                    .Select(x => new Movie() { Title = x });
-
-                return movies;
-            }
+            return await mediaRepository.GetMediasByTitle(title);
         }
 
         //[HttpGet]

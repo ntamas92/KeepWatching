@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using KeepWatching.MediaInfoProvider.Configuration;
+using KeepWatching.MediaInfoProvider.Connections.TMDB;
+using KeepWatching.MediaInfoProvider.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +30,11 @@ namespace KeepWatching.MediaInfoProvider
         {
             services.AddControllers()
                 .AddNewtonsoftJson();
+
+            services.Configure<TMDBAPISettings>(Configuration.GetSection("TMDB").GetSection("API"));
+
+            services.AddHttpClient<TMDBService>();
+            services.AddTransient<IMediaRepository, TMDBMediaRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
