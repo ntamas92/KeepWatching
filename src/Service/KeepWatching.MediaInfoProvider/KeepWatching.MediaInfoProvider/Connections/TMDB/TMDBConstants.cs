@@ -7,6 +7,8 @@ namespace KeepWatching.MediaInfoProvider.Connections.TMDB
 {
     public static class TMDBConstants
     {
-        public static string MultiSearchPath => $"search/multi";
+        public static string MultiSearchPath => "search/multi";
+        public static string Page => "page";
+        public static string Query => "query";
     }
 }

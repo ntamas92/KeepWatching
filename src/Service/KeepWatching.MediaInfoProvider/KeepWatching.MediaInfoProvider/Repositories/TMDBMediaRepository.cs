@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using KeepWatching.MediaInfoProvider.Connections.Interfaces;
 using KeepWatching.MediaInfoProvider.Connections.TMDB;
 using KeepWatching.MediaInfoProvider.Model;
 using Microsoft.Extensions.Configuration;
@@ -12,14 +13,20 @@ namespace KeepWatching.MediaInfoProvider.Repositories
 {
     public class TMDBMediaRepository : IMediaRepository
     {
-        public TMDBMediaRepository(TMDBService TMDBService)
+        public TMDBMediaRepository(IHttpRequestHandler httpRequestHandler)
         {
-            _TMDBService = TMDBService;
+            _httpRequestHandler = httpRequestHandler;
         }
 
         public async Task<IEnumerable<AbstractMedia>> GetMediasByTitle(string title, int page = 1)
         {
-            var result = await _TMDBService.GetMultiSearchResult(title, page);
+            var queryParameters = new Dictionary<string, string>
+            {
+                [TMDBConstants.Page] = page.ToString(),
+                [TMDBConstants.Query] = title,
+            };
+
+            var result = await _httpRequestHandler.Fetch(TMDBConstants.MultiSearchPath, queryParameters);
 
             var stringResult = await result.Content.ReadAsStringAsync();
 
@@ -33,6 +40,6 @@ namespace KeepWatching.MediaInfoProvider.Repositories
             return movies;
         }
 
-        private readonly TMDBService _TMDBService;
+        private readonly IHttpRequestHandler _httpRequestHandler;
     }
 }

@@ -18,25 +18,20 @@ namespace KeepWatching.MediaInfoProvider.Controllers
     [ApiController]
     public class MediaController : ControllerBase
     {
-        private readonly IMediaRepository mediaRepository;
-
         public MediaController(IMediaRepository mediaRepository)
         {
-            this.mediaRepository = mediaRepository;
+            _mediaRepository = mediaRepository;
         }
 
         //Search only TV Shows and Movies, episodes shall be redirected from the TV show homepage
         [HttpGet]
-        public async Task<IEnumerable<AbstractMedia>> Get([FromQuery] string title)
+        public async Task<ActionResult<IEnumerable<AbstractMedia>>> Get([FromQuery] string title)
         {
-            return await mediaRepository.GetMediasByTitle(title);
+            var results = await _mediaRepository.GetMediasByTitle(title);
+             
+            return Ok(results);
         }
 
-        //[HttpGet]
-        //public ActionResult<AbstractMedia> Get(string id)
-        //{
-
-        //}
-
+        private readonly IMediaRepository _mediaRepository;
     }
 }

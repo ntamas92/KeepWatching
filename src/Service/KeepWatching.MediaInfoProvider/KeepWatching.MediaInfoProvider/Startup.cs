@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using KeepWatching.MediaInfoProvider.Configuration;
+using KeepWatching.MediaInfoProvider.Connections.Interfaces;
 using KeepWatching.MediaInfoProvider.Connections.TMDB;
 using KeepWatching.MediaInfoProvider.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +34,7 @@ namespace KeepWatching.MediaInfoProvider
 
             services.Configure<TMDBAPISettings>(Configuration.GetSection("TMDB").GetSection("API"));
 
-            services.AddHttpClient<TMDBService>();
+            services.AddHttpClient<IHttpRequestHandler, TMDBService>();
             services.AddTransient<IMediaRepository, TMDBMediaRepository>();
         }
 

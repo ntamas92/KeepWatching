@@ -1,6 +1,9 @@
 ﻿using KeepWatching.MediaInfoProvider.Configuration;
+using KeepWatching.MediaInfoProvider.Connections.Common;
+using KeepWatching.MediaInfoProvider.Connections.Interfaces;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -10,42 +13,33 @@ using System.Threading.Tasks;
 
 namespace KeepWatching.MediaInfoProvider.Connections.TMDB
 {
-    public class TMDBService
+    public class TMDBService : AbstractHttpRequestExecutor, IHttpRequestHandler
     {
-        private readonly IConfiguration _configuration;
-        private readonly TMDBAPISettings _TMDBSettings;
-
-        public HttpClient Client { get; }
-
-        public TMDBService(HttpClient client, IConfiguration configuration, IOptions<TMDBAPISettings> options)
+        // TODO logger's T
+        public TMDBService(HttpClient client, IConfiguration configuration, IOptions<TMDBAPISettings> options, ILogger<AbstractHttpRequestExecutor> logger) : base(client, logger)
         {
             _configuration = configuration;
             _TMDBSettings = options.Value;
+
             UriBuilder uriBuilder = new UriBuilder(_TMDBSettings.Scheme, _TMDBSettings.Host);
-
             client.BaseAddress = uriBuilder.Uri;
-
-            Client = client;
         }
 
-        public async Task<HttpResponseMessage> GetMultiSearchResult(string title, int page = 1)
+        public async Task<HttpResponseMessage> Fetch(string requestPath, IDictionary<string, string> queryParameters)
         {
-            // TODO encapsulate query building and response handling
-            // TODO get APIKey from IOptions?
-
-            QueryBuilder queryBuilder = new QueryBuilder
+            QueryBuilder queryBuilder = new QueryBuilder(queryParameters)
             {
-                { "api_key", _configuration["TMDB:APIKey"] },
-                { "query", title },
-                { "page", page.ToString() }
+                { "api_key", _configuration["TMDB:APIKey"] }
             };
 
-            string requestUri = $"{_TMDBSettings.Version}/{TMDBConstants.MultiSearchPath}{queryBuilder.ToQueryString().ToUriComponent()}";
+            string query = queryBuilder.ToQueryString().ToUriComponent();
 
-            var response = await Client.GetAsync(requestUri);
-            response.EnsureSuccessStatusCode();
+            string requestUri = $"{_TMDBSettings.Version}/{requestPath}{query}";
 
-            return response;
+            return await ExecuteHttpRequest(client => client.GetAsync(requestUri));
         }
+
+        private readonly IConfiguration _configuration;
+        private readonly TMDBAPISettings _TMDBSettings;
     }
 }
