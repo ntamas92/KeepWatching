@@ -34,8 +34,9 @@ namespace KeepWatching.MediaInfoProvider.Repositories
             IEnumerable<AbstractMedia> movies = JObject.Parse(stringResult)
                     .GetValue("results")
                     .Children()
-                    .Select(x => x.Value<string>("title"))
-                    .Select(x => new Movie() { Title = x });
+                    .Select(x => new { title = x.Value<string>("title"), image = x.Value<string>("poster_path") })
+                    .Where(x => !String.IsNullOrEmpty(x.image))
+                    .Select(x => new Movie() { Title = x.title, PosterPath = $"https://image.tmdb.org/t/p/w92/{x.image}" });
 
             return movies;
         }
