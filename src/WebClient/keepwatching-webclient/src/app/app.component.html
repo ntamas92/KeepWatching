@@ -5,12 +5,8 @@
     <input type="text" id="filter"(input)="handleInputChange($event.target.value)" />
   </form>
 
-  <!-- <p>{{executingQuery}}</p> -->
-
-  <p>NumberOfQueries: {{this.numberOfQueries}}</p>
-
-  <div *ngFor="let row of this.data">
-    <img src={{row.image}} alt={{row.title}} />
+  <div *ngFor="let row of this.searchResult">
+    <img src={{row.posterPath}} alt={{row.image}} />
     <p>{{row.title}}</p>
   </div>
 

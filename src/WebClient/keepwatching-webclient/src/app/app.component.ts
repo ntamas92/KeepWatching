@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MediaAccessService, IMediaSearchResult } from './services/media-access.service'
 import { async } from '@angular/core/testing';
 
 @Component({
@@ -9,9 +10,13 @@ import { async } from '@angular/core/testing';
 export class AppComponent {
   title = 'keepwatching-webclient'
   executingQuery: string = null;
-   pendingQuery: string = null;
-   numberOfQueries : number = 0;
-   data: [] = null;
+  pendingQuery: string = null;
+  searchResult: IMediaSearchResult[] = null;
+  mediaAccessService : MediaAccessService;
+
+  constructor(mediaAccessService: MediaAccessService){
+    this.mediaAccessService = mediaAccessService;
+  }
 
   handleInputChange(value: string) {
     if(this.executingQuery !== null){
@@ -23,27 +28,18 @@ export class AppComponent {
     }
   }
 
-  async getSearchResult(query: string)  {
-    this.numberOfQueries++;
-    var fetchResult = await this.fetchSearchResult(query);
+  getSearchResult(query: string)  {    
+    var onCompleted = () => {
+      this.executingQuery = this.pendingQuery;
+      this.pendingQuery = null;
 
-    this.executingQuery = this.pendingQuery;
-    this.pendingQuery = null;
-    this.data = fetchResult;
-
-    if(this.executingQuery !== null) {
-      await this.getSearchResult(this.executingQuery)
-    }      
-  }
-
-  fetchSearchResult(query: string) : Promise<[]> {
-    if(query === ''){
-      return new Promise((resolve, reject) => {this.numberOfQueries = 0; resolve([]);}) 
+      if(this.executingQuery !== null)
+        this.getSearchResult(this.executingQuery);
     }
-    else{
-      return fetch('https://localhost:44367/api/media?title=' + query)
-        .then(response => response.json())
-        .then(x => { return x.map(fun => ({'title':fun.title, 'image':fun.posterPath}))})
-    }
+
+    this.mediaAccessService.fetchMediaSearchResult(query).subscribe({
+      next:result => this.searchResult = result, 
+      complete:onCompleted
+    });
   }
 }
