@@ -4,7 +4,10 @@
 
 export const environment = {
   production: false,
-  mediaAccessUrl: 'https://localhost:44367/api/media'
+  serviceUrlRoot: 'https://localhost:44367/api',
+
+  suggestionsEndpoint: '/media',
+  detailsEndpoint: '/media/details',
 };
 
 /*

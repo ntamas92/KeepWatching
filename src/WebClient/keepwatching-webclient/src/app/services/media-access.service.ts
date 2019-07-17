@@ -8,8 +8,6 @@ export interface IMediaSearchResult {
   posterPath: string
 }
 
-const API_URL = environment.mediaAccessUrl;
-
 @Injectable({
   providedIn: 'root'
 })
@@ -18,10 +16,18 @@ export class MediaAccessService {
   constructor(private httpClient:HttpClient) { }
 
   fetchMediaSearchResult(query: string) : Observable<IMediaSearchResult[]> {
-    if(query === '')
+     if(query === '')
       return from([[]])
     
     var params = new HttpParams().set('title', query)
-    return this.httpClient.get<IMediaSearchResult[]>(API_URL, {params:params})    
+    var suggestionsUri = environment.serviceUrlRoot + environment.suggestionsEndpoint
+    
+    return this.httpClient.get<IMediaSearchResult[]>(suggestionsUri, {params:params})    
   }
+
+
+  // fetchMediaDetails(id:string) : Promise<IMediaSearchResult> {
+  //   //TODO: Parameterize correctly
+  //   return this.httpClient.get<IMediaSearchResult>(API_URL).toPromise()
+  // }
 }

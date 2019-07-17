@@ -4,12 +4,14 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MediaDetailsComponent } from './media-details/media-details.component';
+import { MediaDetailsComponent } from './components/media-details/media-details.component';
+import { SuggestionsComponent } from './components/suggestions/suggestions.component'
 
 @NgModule({
   declarations: [
     AppComponent,
-    MediaDetailsComponent
+    MediaDetailsComponent,
+    SuggestionsComponent
   ],
   imports: [
     BrowserModule,

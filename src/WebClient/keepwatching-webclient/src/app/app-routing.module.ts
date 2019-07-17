@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {AppComponent} from './app.component'
-import {MediaDetailsComponent} from './media-details/media-details.component'
+import {MediaDetailsComponent} from './components/media-details/media-details.component'
 
 const routes: Routes = [
-  {path: '', component: AppComponent},
   {path: 'details/:detailsId', component: MediaDetailsComponent}
 ];
 

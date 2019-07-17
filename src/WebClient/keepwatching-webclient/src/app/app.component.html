@@ -1,13 +1,5 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
-
-  <form>
-    <input type="text" id="filter"(input)="handleInputChange($event.target.value)" />
-  </form>
-
-  <div *ngFor="let row of this.searchResult">
-    <img src={{row.posterPath}} alt={{row.image}} />
-    <p>{{row.title}}</p>
-  </div>
-
-<router-outlet></router-outlet>
+  <!--A more generic header could be introduced which would contain the suggestions-->
+  <app-suggestions></app-suggestions>
+  <router-outlet></router-outlet>
