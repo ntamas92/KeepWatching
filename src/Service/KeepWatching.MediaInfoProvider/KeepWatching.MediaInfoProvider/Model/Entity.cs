@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace KeepWatching.MediaInfoProvider.Model
 {
-    public class Movie : AbstractMedia
+    public class Entity
     {
+        public string Id { get; set; }
     }
 }

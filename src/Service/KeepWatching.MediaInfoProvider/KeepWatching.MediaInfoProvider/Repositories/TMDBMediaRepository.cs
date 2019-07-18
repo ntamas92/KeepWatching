@@ -18,7 +18,7 @@ namespace KeepWatching.MediaInfoProvider.Repositories
             _httpRequestHandler = httpRequestHandler;
         }
 
-        public async Task<IEnumerable<AbstractMedia>> GetMediasByTitle(string title, int page = 1)
+        public async Task<PagedResult<AbstractMedia>> GetMediasByTitle(string title, int page = 1)
         {
             var queryParameters = new Dictionary<string, string>
             {
@@ -30,17 +30,35 @@ namespace KeepWatching.MediaInfoProvider.Repositories
 
             var stringResult = await result.Content.ReadAsStringAsync();
 
+            var jsonForm = JObject.Parse(stringResult);
+
             // TODO use json parsing strategy to handle DTO mapping
-            IEnumerable<AbstractMedia> movies = JObject.Parse(stringResult)
+            IEnumerable<AbstractMedia> movies = jsonForm
                     .GetValue("results")
                     .Children()
                     .Select(x => new { title = x.Value<string>("title"), image = x.Value<string>("poster_path") })
                     .Where(x => !String.IsNullOrEmpty(x.image))
                     .Select(x => new Movie() { Title = x.title, PosterPath = $"https://image.tmdb.org/t/p/w92/{x.image}" });
 
-            return movies;
+            var pagedResult = ExtractPagingData<AbstractMedia>(jsonForm);
+
+            pagedResult.PageContent = movies;
+
+            return pagedResult;
+        }
+
+        private PagedResult<T> ExtractPagingData<T>(JObject jsonForm) where T : AbstractMedia
+        {
+            return new PagedResult<T>()
+            {
+                CurrentPage = jsonForm.Value<int>("page"),
+                TotalPages = jsonForm.Value<int>("total_pages"),
+                TotalResults = jsonForm.Value<int>("total_results")
+            };
         }
 
         private readonly IHttpRequestHandler _httpRequestHandler;
     }
+
+    
 }

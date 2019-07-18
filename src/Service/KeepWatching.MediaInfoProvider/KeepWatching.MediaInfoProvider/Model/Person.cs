@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace KeepWatching.MediaInfoProvider.Model
 {
-    public class Person
+    public class Person : Entity
     {
     }
 }

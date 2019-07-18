@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace KeepWatching.MediaInfoProvider.Model
 {
-    public abstract class AbstractMedia
+    public abstract class AbstractMedia : Entity
     {
-        public string Id { get; set; }
-
         public string Title { get; set; }
 
         public DateTime Released { get; set; }

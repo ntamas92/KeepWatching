@@ -8,6 +8,6 @@ namespace KeepWatching.MediaInfoProvider.Repositories
 {
     public interface IMediaRepository
     {
-        Task<IEnumerable<AbstractMedia>> GetMediasByTitle(string title, int page = 1);
+        Task<PagedResult<AbstractMedia>> GetMediasByTitle(string title, int page = 1);
     }
 }

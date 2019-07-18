@@ -25,7 +25,7 @@ namespace KeepWatching.MediaInfoProvider.Controllers
 
         //Search only TV Shows and Movies, episodes shall be redirected from the TV show homepage
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AbstractMedia>>> Get([FromQuery] string title)
+        public async Task<ActionResult<PagedResult<AbstractMedia>>> Get([FromQuery] string title)
         {
             var results = await _mediaRepository.GetMediasByTitle(title);
              
