@@ -2,11 +2,17 @@
     <form>
         <input type="text" id="filter"(input)="handleInputChange($event.target.value)" />
     </form>
+    <div>
+        <button [routerLink]="['/search', this.searchResult]"
+                 id="detailedSearch" 
+                 type="submit">Search</button>
+    </div>
+    
     
     <!--TODO: Implement smarter suggestion showing, with dropdown and stuff. -->
-    <div *ngFor="let row of this.searchResult">
+    <div *ngFor="let row of this.searchResult.pageContent">
             <a [routerLink]="['/details/', row.title]">
-                <img src={{row.posterPath}} alt={{row.image}} />
+                <img src={{row.posterPath}} alt={{row.posterPath}} />
                 <p>{{row.title}}</p>
             </a>
     </div>    

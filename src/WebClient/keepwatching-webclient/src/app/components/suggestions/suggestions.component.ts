@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MediaAccessService, IMediaSearchResult } from '../../services/media-access.service'
+import { MediaAccessService, IMediaSearchResult, IPagedResult } from '../../services/media-access.service'
 
 
 @Component({
@@ -13,7 +13,7 @@ export class SuggestionsComponent implements OnInit {
 
   executingQuery: string = null;
   pendingQuery: string = null;
-  searchResult: IMediaSearchResult[] = null;
+  searchResult: IPagedResult[] = null;
   mediaAccessService : MediaAccessService;
 
   constructor(mediaAccessService: MediaAccessService){

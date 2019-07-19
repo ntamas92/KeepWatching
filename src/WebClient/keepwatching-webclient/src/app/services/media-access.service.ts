@@ -3,6 +3,13 @@ import { environment } from '../../environments/environment'
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 
+export interface IPagedResult {
+  currentPage: number,
+  totalResults: number,
+  totalPages: number, 
+  pageContent: IMediaSearchResult[]
+}
+
 export interface IMediaSearchResult {
   title: string,
   posterPath: string
@@ -15,14 +22,14 @@ export class MediaAccessService {
 
   constructor(private httpClient:HttpClient) { }
 
-  fetchMediaSearchResult(query: string) : Observable<IMediaSearchResult[]> {
+  fetchMediaSearchResult(query: string) : Observable<IPagedResult[]> {
      if(query === '')
       return from([[]])
     
     var params = new HttpParams().set('title', query)
     var suggestionsUri = environment.serviceUrlRoot + environment.suggestionsEndpoint
     
-    return this.httpClient.get<IMediaSearchResult[]>(suggestionsUri, {params:params})    
+    return this.httpClient.get<IPagedResult[]>(suggestionsUri, {params:params})    
   }
 
 
