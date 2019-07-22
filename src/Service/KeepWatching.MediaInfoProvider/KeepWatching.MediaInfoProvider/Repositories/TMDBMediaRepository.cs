@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 using KeepWatching.MediaInfoProvider.Connections.Interfaces;
 using KeepWatching.MediaInfoProvider.Connections.TMDB;
 using KeepWatching.MediaInfoProvider.Model;
+using KeepWatching.MediaInfoProvider.Repositories.TMDB;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace KeepWatching.MediaInfoProvider.Repositories
 {
@@ -32,13 +35,13 @@ namespace KeepWatching.MediaInfoProvider.Repositories
 
             var jsonForm = JObject.Parse(stringResult);
 
+            var serializer = new JsonSerializer();
+            serializer.Converters.Add(new TMDBConverter());
+
             // TODO use json parsing strategy to handle DTO mapping
             IEnumerable<AbstractMedia> movies = jsonForm
-                    .GetValue("results")
-                    .Children()
-                    .Select(x => new { title = x.Value<string>("title"), image = x.Value<string>("poster_path") })
-                    .Where(x => !String.IsNullOrEmpty(x.image))
-                    .Select(x => new Movie() { Title = x.title, PosterPath = $"https://image.tmdb.org/t/p/w92/{x.image}" });
+                .GetValue("results")
+                .ToObject<IEnumerable<Movie>>(serializer);
 
             var pagedResult = ExtractPagingData<AbstractMedia>(jsonForm);
 
@@ -46,6 +49,29 @@ namespace KeepWatching.MediaInfoProvider.Repositories
 
             return pagedResult;
         }
+
+        public async Task<IEnumerable<Suggestion>> GetSuggestionsAsync(string title)
+        {
+            var queryParameters = new Dictionary<string, string>
+            {
+                [TMDBConstants.Page] = 1.ToString(), //TODO: Can we eliminate this from here?
+                [TMDBConstants.Query] = title,
+            };
+
+            var result = await _httpRequestHandler.Fetch(TMDBConstants.MultiSearchPath, queryParameters);
+
+            var stringResult = await result.Content.ReadAsStringAsync();
+
+            var jsonForm = JObject.Parse(stringResult);
+
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Converters.Add(new TMDBConverter());
+            
+            var objects = jsonForm.GetValue("results").ToObject<IEnumerable<Suggestion>>(serializer);
+
+            return objects;
+        }
+
 
         private PagedResult<T> ExtractPagingData<T>(JObject jsonForm) where T : AbstractMedia
         {
