@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./media-details.component.css']
 })
 export class MediaDetailsComponent implements OnInit {
-  mediaId;
+  mediaId: string;
 
   constructor(
     private route: ActivatedRoute

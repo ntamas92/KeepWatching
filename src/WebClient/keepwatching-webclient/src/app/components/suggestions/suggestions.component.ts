@@ -13,7 +13,7 @@ export class SuggestionsComponent implements OnInit {
 
   executingQuery: string = null;
   pendingQuery: string = null;
-  searchResult: IPagedResult[] = null;
+  searchResult: IPagedResult = null;
   mediaAccessService : MediaAccessService;
 
   constructor(mediaAccessService: MediaAccessService){
@@ -40,7 +40,7 @@ export class SuggestionsComponent implements OnInit {
     }
 
     this.mediaAccessService.fetchMediaSearchResult(query).subscribe({
-      next:result => this.searchResult = result, 
+      next:result => { this.searchResult = result }, 
       complete:onCompleted
     });
   }

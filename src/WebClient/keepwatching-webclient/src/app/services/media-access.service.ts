@@ -22,14 +22,14 @@ export class MediaAccessService {
 
   constructor(private httpClient:HttpClient) { }
 
-  fetchMediaSearchResult(query: string) : Observable<IPagedResult[]> {
+  fetchMediaSearchResult(query: string) : Observable<IPagedResult> {
      if(query === '')
-      return from([[]])
+      return from([])
     
     var params = new HttpParams().set('title', query)
     var suggestionsUri = environment.serviceUrlRoot + environment.suggestionsEndpoint
     
-    return this.httpClient.get<IPagedResult[]>(suggestionsUri, {params:params})    
+    return this.httpClient.get<IPagedResult>(suggestionsUri, {params:params})    
   }
 
 

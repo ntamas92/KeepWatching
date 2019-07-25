@@ -7,7 +7,7 @@ namespace KeepWatching.MediaInfoProvider.Model
     {
         public string Title { get; set; }
 
-        public DateTime Released { get; set; }
+        public DateTime? Released { get; set; }
 
         public uint Length { get; set; }
 

@@ -44,7 +44,8 @@ namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
                     };
                     return jObject.ToObject(objectType, JsonSerializer.Create(_serializerSettings));
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    return null;
+                    //throw new ArgumentOutOfRangeException();
             }
         }
 
