@@ -7,12 +7,12 @@ namespace KeepWatching.MediaInfoProvider.Model
 {
     public class PagedResult<T> where T : Entity
     {
-        public int CurrentPage { get; set; }
+        public int Page { get; set; }
 
         public int TotalResults { get; set; }
 
         public int TotalPages { get; set; }
 
-        public IEnumerable<T> PageContent { get; set; }
+        public IEnumerable<T> Results { get; set; }
     }
 }

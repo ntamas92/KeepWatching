@@ -7,13 +7,16 @@ using System.Reflection;
 
 namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
 {
-    public class MovieContractResolver : DefaultContractResolver
+    public class PropertyMapBasedContractResolver : DefaultContractResolver
     {
-        private Dictionary<string, string> _propertyMappings = new Dictionary<string, string>()
+        private Dictionary<string, string> _propertyMappings;
+
+        //TODO: Consider refactoring into a ContractResolverDecorator.
+        public PropertyMapBasedContractResolver(IDictionary<string, string> propertyMappings)
         {
-            [nameof(Suggestion.Type)] = "media_type",
-            [nameof(Suggestion.Released)] = "release_date", 
-        };
+            _propertyMappings = new Dictionary<string, string>(propertyMappings);
+        }
+
 
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
