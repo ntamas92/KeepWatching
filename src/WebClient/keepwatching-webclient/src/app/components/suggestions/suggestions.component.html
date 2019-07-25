@@ -1,6 +1,6 @@
 <div id="suggestions">
     <form>
-        <input type="text" #searchFor id="filter"(input)="handleInputChange($event.target.value)" />
+        <input type="text" #searchFor id="filter" (input)="handleInputChange($event.target.value)" />
     </form>
     <div>
         <button [routerLink]="['/search/', this.searchFor.value]"
@@ -10,7 +10,7 @@
     
     
     <!--TODO: Implement smarter suggestion showing, with dropdown and stuff. -->
-    <div *ngFor="let row of this.searchResult?.pageContent">
+    <div *ngFor="let row of this.searchResult?.results">
             <a [routerLink]="['/details/', row.title]">
                 <img src={{row.posterPath}} alt={{row.posterPath}} />
                 <p>{{row.title}}</p>

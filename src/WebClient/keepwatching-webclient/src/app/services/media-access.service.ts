@@ -4,10 +4,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 
 export interface IPagedResult {
-  currentPage: number,
+  page: number,
   totalResults: number,
   totalPages: number, 
-  pageContent: IMediaSearchResult[]
+  results: IMediaSearchResult[]
 }
 
 export interface IMediaSearchResult {

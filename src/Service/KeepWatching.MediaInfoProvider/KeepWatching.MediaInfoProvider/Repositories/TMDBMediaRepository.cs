@@ -42,7 +42,9 @@ namespace KeepWatching.MediaInfoProvider.Repositories
             using (JsonTextReader tr = new JsonTextReader(sr))
             {
                 var pagedResult = _serializer.Deserialize<PagedResult<AbstractMedia>>(tr);
-                pagedResult.Results = pagedResult.Results.Select(x => { x.PosterPath = $"https://image.tmdb.org/t/p/w92/{x.PosterPath}"; return x; });
+                pagedResult.Results = pagedResult.Results
+                                                 .Where(x => x != null)
+                                                 .Select(x => { x.PosterPath = x.PosterPath != null ? $"https://image.tmdb.org/t/p/w92/{x.PosterPath}" : null; return x; }); //TODO: eliminate
                 return pagedResult;
             }
         }
@@ -58,7 +60,9 @@ namespace KeepWatching.MediaInfoProvider.Repositories
             var jsonForm = JObject.Parse(stringResult);
 
             var objects = jsonForm.GetValue("results")
-                                  .ToObject<IEnumerable<Suggestion>>(_serializer).Select(x => { x.PosterPath = $"https://image.tmdb.org/t/p/w92/{x.PosterPath}"; return x; });
+                                  .ToObject<IEnumerable<Suggestion>>(_serializer)
+                                  .Where(x =>x != null)
+                                  .Select(x => { x.PosterPath = x.PosterPath != null ? $"https://image.tmdb.org/t/p/w92/{x.PosterPath}" : null; return x; });
 
             return objects;
         }
