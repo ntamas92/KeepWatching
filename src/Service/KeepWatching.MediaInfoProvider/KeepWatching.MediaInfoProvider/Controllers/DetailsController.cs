@@ -29,7 +29,7 @@ namespace KeepWatching.MediaInfoProvider.Controllers
         }
 
         [HttpGet("tv/{tvId}")]
-        public async Task<ActionResult<Movie>> GetTvDetails(string tvId)
+        public async Task<ActionResult<TVShow>> GetTvDetails(string tvId)
         {
             var result = await _mediaRepository.GetMediaDetailsAsync<TVShow>(tvId, MediaType.Tv);
 
