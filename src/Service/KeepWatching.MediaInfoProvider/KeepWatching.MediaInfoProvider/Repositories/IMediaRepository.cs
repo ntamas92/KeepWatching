@@ -11,5 +11,7 @@ namespace KeepWatching.MediaInfoProvider.Repositories
         Task<PagedResult<AbstractMedia>> GetMediasByTitle(string title, int page = 1);
 
         Task<IEnumerable<Suggestion>> GetSuggestionsAsync(string title);
+
+        Task<T> GetMediaDetailsAsync<T>(string mediaId, MediaType mediaType);
     }
 }

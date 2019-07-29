@@ -9,8 +9,10 @@ namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
 {
     public class TMDBConverter<T> : JsonConverter
     {
-        public TMDBConverter()
+        public TMDBConverter(Func<JToken, MediaType> mediaTypeSelector)
         {
+             _mediaTypeSelector = mediaTypeSelector;
+
             var namingStrategy = new SnakeCaseNamingStrategy();
 
             _movieContractResolver = new PropertyMapBasedContractResolver(_moviePropertyMappings) { NamingStrategy = namingStrategy };
@@ -20,7 +22,7 @@ namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(T).IsAssignableFrom(objectType);
+            return typeof(T) == objectType;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -36,14 +38,16 @@ namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
             }
 
             JToken jObject = JToken.ReadFrom(reader);
-            string type = jObject["media_type"].ToString();
-            switch (type)
+
+            MediaType mediaType = _mediaTypeSelector(jObject);
+
+            switch (mediaType)
             {
-                case "movie":
+                case MediaType.Movie:
                     contractResolver = _movieContractResolver;
                     objectToDeserializeOnto ??= new Movie(); //Wow...
                     break;
-                case "tv":
+                case MediaType.Tv:
                     contractResolver = _tvContractResolver;
                     objectToDeserializeOnto ??= new TVShow();
                     break;
@@ -69,6 +73,8 @@ namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
         {
             [nameof(Suggestion.Type)] = "media_type",
             [nameof(Suggestion.Released)] = "release_date",
+            [nameof(AbstractMedia.Length)] = "runtime",
+            [nameof(AbstractMedia.Plot)] = "overview",
         };
 
         private Dictionary<string, string> _tvPropertyMappings = new Dictionary<string, string>()
@@ -80,5 +86,6 @@ namespace KeepWatching.MediaInfoProvider.Repositories.TMDB
 
         private PropertyMapBasedContractResolver _movieContractResolver;
         private PropertyMapBasedContractResolver _tvContractResolver;
+        private Func<JToken, MediaType> _mediaTypeSelector;
     }
 }

@@ -27,10 +27,21 @@ namespace KeepWatching.MediaInfoProvider.Connections.TMDB
 
         public async Task<HttpResponseMessage> Fetch(string requestPath, IDictionary<string, string> queryParameters)
         {
-            QueryBuilder queryBuilder = new QueryBuilder(queryParameters)
-            {
-                { "api_key", _configuration["TMDB:APIKey"] }
-            };
+            QueryBuilder queryBuilder = new QueryBuilder(queryParameters);
+
+            return await Fetch(requestPath, queryBuilder);
+        }
+
+        public async Task<HttpResponseMessage> Fetch(string requestPath, params (string key, string value)[] queryParameters)
+        {
+            QueryBuilder queryBuilder = new QueryBuilder(queryParameters.Select(x => KeyValuePair.Create(x.key, x.value)));
+
+            return await Fetch(requestPath, queryBuilder);
+        }
+
+        private async Task<HttpResponseMessage> Fetch(string requestPath, QueryBuilder queryBuilder)
+        {
+            queryBuilder.Add("api_key", _configuration["TMDB:APIKey"]);
 
             string query = queryBuilder.ToQueryString().ToUriComponent();
 
