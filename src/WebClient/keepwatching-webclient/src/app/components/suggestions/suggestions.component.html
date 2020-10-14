@@ -1,0 +1,19 @@
+<div id="suggestions">
+    <form>
+        <input type="text" #searchFor id="filter" (input)="handleInputChange($event.target.value)" />
+    </form>
+    <div>
+        <button [routerLink]="['/search/', this.searchFor.value]"
+                 id="detailedSearch" 
+                 type="submit">Search</button>
+    </div>
+    
+    
+    <!--TODO: Implement smarter suggestion showing, with dropdown and stuff. -->
+    <div *ngFor="let row of this.searchResult?.results">
+            <a [routerLink]="['/details/', row.title]">
+                <img src={{row.posterPath}} alt={{row.posterPath}} />
+                <p>{{row.title}}</p>
+            </a>
+    </div>    
+</div>

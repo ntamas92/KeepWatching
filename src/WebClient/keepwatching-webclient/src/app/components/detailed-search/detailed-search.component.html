@@ -1,0 +1,14 @@
+<p>query: {{query}}</p>
+
+<div  *ngFor="let row of this.searchResult?.pageContent">
+        <a [routerLink]="['/details/', row.title]">
+            <img src={{row.posterPath}} alt={{row.posterPath}} />
+            <p>{{row.title}}</p>
+        </a>
+</div>  
+
+<div>
+    <p *ngIf='this.searchResult'>
+        Current page: {{this.searchResult.page}}  Total pages: {{this.searchResult.totalPages}}
+    </p>
+</div>
