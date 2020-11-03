@@ -1,0 +1,36 @@
+.backdropContainer {
+  position: relative;
+  max-width: 1080; /* Maximum width */
+  margin: 0 auto; /* Center it */
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.backdropContainer .backdropContent {
+  position: absolute; /* Position the background text */
+  top: 0; /* At the bottom. Use top:0 to append it to the top */
+  background: rgb(0, 0, 0); /* Fallback color */
+  background: rgba(0, 0, 0, 0.6 ); /* Black background with 0.5 opacity */
+  color: #f1f1f1; /* Grey text */
+  width: 100%; /* Full width */
+  height: 100%
+  /* margin: 0 auto */
+  /*padding: 20px;  Some padding */
+}
+
+.star {
+  height: 55px;
+  width: 55px;
+  -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  text-align: center;
+  background: gold;
+  color: white;
+}
+
+.star::before {
+  display: inline-block;
+  height: 100%;
+  background: blue;
+  vertical-align: middle;
+  content: '';
+}

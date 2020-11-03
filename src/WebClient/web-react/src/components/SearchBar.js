@@ -1,60 +1,74 @@
-import React, { useState, useEffect } from "react"
-
-const useThrottledQuery = (fetchingFunction, fetchCallback) => {
-  const [query, setQuery] = useState(null)
-  const [pendingQuery, setPendingQuery] = useState(null)
-
-  useEffect(() => {
-    if (query === null && pendingQuery !== null) {
-      setPendingQuery(null)
-      setQuery(pendingQuery)
-
-      fetchingFunction(pendingQuery)
-        .then(fetchCallback)
-        .catch(console.error)
-        .finally(x => setQuery(null))
-    }
-  }, [query, pendingQuery, fetchingFunction, fetchCallback])
-
-  return setPendingQuery
-}
+import React, { useState } from "react"
+import axios from "axios"
+import { AsyncTypeahead } from "react-bootstrap-typeahead"
+import { Link } from "react-router-dom"
 
 const SearchBar = () => {
-  const fetchSearchResult = (query) => {
+  const fetchSearchResult = async (query) => {
+    setIsLoading(true)
+
     if (query === '') {
-      return new Promise((resolve, reject) => resolve([]))
+      return []
     }
-    else {
-      return fetch('http://localhost:5000/api/search?title=' + query)
-        .then(response => response.json())
-        .then(x => { return x.map(fun => ({ 'title': fun.title, 'image': fun.poster_path })) })
+
+    const uri = `http://localhost:5000/api/search/suggestions?title=${query}`
+
+    try {
+      const response = await axios.get(uri)
+      
+      const items = response.data.map(elem => ({ ...elem, id: elem.id.toString() }))
+
+      setSearchResult(items)
+    }
+    catch (error) {
+      //TODO: implement a proper error handler
+      console.log(error)
+      alert(error)
+    }
+    finally {
+      setIsLoading(false)
     }
   }
 
   const [searchResult, setSearchResult] = useState([])
-  const fetchQuery = useThrottledQuery(fetchSearchResult, setSearchResult)
+  const [isLoading, setIsLoading] = useState(false)
 
   return (
-    <div className="search" style={{ width: '250px' }}>
-      <div className="search-bar">
-        <form>
-          <input type="text" id="filter" onChange={event => fetchQuery(event.target.value)} />
-        </form>
-      </div>
-      <SearchResults results={searchResult} />
+    <div style={{minWidth:330}}>
+      <AsyncTypeahead
+        filterBy={() => true}
+        id="title"
+        isLoading={isLoading}
+        onSearch={fetchSearchResult}
+        options={searchResult}
+        labelKey="id"
+        placeholder="Search for a movie, tv, or person..."
+        useCache={false}
+        renderMenuItemChildren={(element, props) => (
+          <>
+            <img className="img-thumbnail" src={element.poster_path} alt={element.title} style={{ float: 'left' }} height={100} />
+            <Link to={`/${element.type}/${element.id}`}>{element.title}</Link>
+          </>
+        )}
+      />
     </div>
   )
-}
-
-
-const SearchResults = ({ results }) => {
-  return <div className="search-results">
-    {results.map(element =>
-      <div className="result-row" style={{ overflow: 'auto' }}>
-        <img src={element.image} alt={element.title} style={{ float: 'left' }} height={100} />
-        <p>{element.title}</p>
-      </div>)}
-  </div>
+  // return (
+  //   <div className="search" style={{ width: '250px' }}>
+  //     <form class="form-inline d-flex dropdown">
+  //       <input class="form-control form-control-sm" type="text" id="filter" placeholder="Search" data-toggle="dropdown" onChange={event => fetchQuery(event.target.value)} />
+  //       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+  //         {searchResult && searchResult.map(element =>
+  //           <li role="presentation">
+  //             <div className="result-row" style={{ overflow: 'auto' }}>
+  //               
+  //             </div>
+  //           </li>
+  //         )}
+  //       </ul>
+  //     </form>
+  //   </div>
+  // )
 }
 
 export default SearchBar
