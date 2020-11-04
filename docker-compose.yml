@@ -4,32 +4,32 @@ services:
   media_provider:
     # this equates to:
     # build:
-    #   context: ./src/Service/MediaInfoProvider
+    #   context: ./src/service/media-info-provider
     #   dockerfile: Dockerfile
-    build: ./src/Service/MediaInfoProvider
+    build: ./src/service/media-info-provider
     environment:
       CHOKIDAR_USEPOLLING: "true"
       PORT: 5000
     env_file:
-      - ./src/Service/MediaInfoProvider/.env
+      - ./src/service/media-info-provider/.env
     volumes: 
-      - ./src/Service/MediaInfoProvider/src:/app/src
+      - ./src/service/media-info-provider/src:/app/src
     ports: 
       - 5000:5000
     # TODO: maybe it can be reused in production environment
     # secrets:
     #   - TMDB_API_KEY
   user_account_service:
-    build: ./src/Service/user-account-service
+    build: ./src/service/user-account-service
     environment: 
       CHOKIDAR_USEPOLLING: "true"
-      PORT: 5001
+      PORT: 5001:5001
     env_file:
-      - ./src/Service/user-account-service/.env
+      - ./src/service/user-account-service/.env
     volumes:
-      - ./src/Service/user-account-service/src:/app/src
+      - ./src/service/user-account-service/src:/app/src
     ports: 
-      - 5001:5001
+      - 5001
   user_db:
     image: mongo:latest
     environment:
@@ -41,14 +41,14 @@ services:
       - mongodb_data_container:/data/db
   react_frontend:
     build:
-      context: ./src/WebClient\web-react
+      context: ./src/client\web-react
       dockerfile: Dockerfile
     environment:
       CHOKIDAR_USEPOLLING: "true"
       PORT: 3000
     volumes:
-      - ./src/WebClient/web-react/src:/app/src
-      - ./src/WebClient/web-react/public:/app/public
+      - ./src/client/web-react/src:/app/src
+      - ./src/client/web-react/public:/app/public
     ports:
       - 3000:3000
 
