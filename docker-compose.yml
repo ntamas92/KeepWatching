@@ -19,6 +19,17 @@ services:
     # TODO: maybe it can be reused in production environment
     # secrets:
     #   - TMDB_API_KEY
+  user_account_service:
+    build: ./src/Service/user-account-service
+    environment: 
+      CHOKIDAR_USEPOLLING: "true"
+      PORT: 5001
+    env_file:
+      - ./src/Service/user-account-service/.env
+    volumes:
+      - ./src/Service/user-account-service/src:/app/src
+    ports: 
+      - 5001:5001
   react_frontend:
     build:
       context: ./src/WebClient\web-react
