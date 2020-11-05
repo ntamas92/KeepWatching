@@ -23,13 +23,16 @@ services:
     build: ./src/service/user-account-service
     environment: 
       CHOKIDAR_USEPOLLING: "true"
-      PORT: 5001:5001
+      PORT: 5001
+      MONGODB_URI: mongodb://root:rootpassword@user_DB:27017
     env_file:
       - ./src/service/user-account-service/.env
     volumes:
       - ./src/service/user-account-service/src:/app/src
     ports: 
-      - 5001
+      - 5001:5001
+    depends_on:
+      - user_db
   user_db:
     image: mongo:latest
     environment:
