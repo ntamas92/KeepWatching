@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.2.7",
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
+    "graphql": "^15.4.0",
     "react": "^16.8.6",
     "react-bootstrap-typeahead": "^5.1.2",
     "react-dom": "^16.8.6",

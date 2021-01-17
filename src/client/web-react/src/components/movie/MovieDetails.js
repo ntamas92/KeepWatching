@@ -3,10 +3,24 @@ import { useParams } from "react-router-dom"
 import axios from "axios"
 import "./movieDetails.css"
 
+//TODO: Extract from here
+import { useLazyQuery, gql } from '@apollo/client';
+
+const AVAILABLE_VERSIONS = gql`
+  query availableVersions($title: String!){
+    findByTitle(title: $title){
+      title, id
+    }
+  } 
+`;
+
 const MovieDetails = () => {
   const { id } = useParams();
 
   const [movie, setMovie] = useState(null)
+  const [availableVersions, setAvailableVersions] = useState([])
+
+  const [availableVersionsRequest, availableVersionsResponse] = useLazyQuery(AVAILABLE_VERSIONS);
 
   useEffect(() => {
     const uri = `http://localhost:5000/api/movie/${id}`
@@ -14,6 +28,22 @@ const MovieDetails = () => {
     axios.get(uri).then(x => setMovie(x.data))
 
   }, [id])
+
+  useEffect(() => {
+    //TODO: Reach out to apollo endpoint
+    if (movie) {
+      console.log(availableVersionsRequest)
+      availableVersionsRequest({ variables: { title: movie.title } })
+    }
+  }, [movie, availableVersionsRequest])
+
+  useEffect(() => {
+    if (availableVersionsResponse.data) {
+      
+      setAvailableVersions(availableVersionsResponse.data.findByTitle)
+      console.log(availableVersionsResponse.data.findByTitle)
+    }
+  }, [availableVersionsResponse.data])
 
   return (
     <div>
@@ -30,12 +60,17 @@ const MovieDetails = () => {
 
                   <h1 className="text-secondary">{movie.title}</h1>
                   <div className="star text-dark">{movie.vote_average} </div>
-
                 </div>
-
                 <div className="d-flex flex-column">
                   <p>Length: {movie.runtime} minutes</p>
                   <p>{movie.overview}</p>
+                  {availableVersions.length > 0 && <div>
+                    <p>Downloadable:  {availableVersions.length}</p>
+                    
+                    <ul>
+                      {availableVersions.map(x => <li>{x.title}</li>)}
+                    </ul>
+                  </div>}
                 </div>
               </div>
             </div>
